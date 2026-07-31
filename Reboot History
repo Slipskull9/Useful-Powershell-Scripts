@@ -1,0 +1,3 @@
+## Adjust MaxEvents deending on how many entries you want
+
+Get-WinEvent -FilterHashtable @{LogName='System'; Id=1074} -MaxEvents 3 | Format-Table -Wrap
