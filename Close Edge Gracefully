@@ -1,0 +1,12 @@
+$edge = Get-Process msedge -ErrorAction SilentlyContinue
+if ($edge) {
+    $edge | ForEach-Object { $_.CloseMainWindow() }
+
+    try {
+        $edge | Wait-Process -Timeout 10 -ErrorAction Stop
+    }
+    catch {
+        # Only force-kill if Edge failed to close gracefully
+        Get-Process msedge -ErrorAction SilentlyContinue | Stop-Process -Force
+    }
+}
