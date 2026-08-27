@@ -1,0 +1,26 @@
+$DisplayName = "[Enter program name here]"
+
+$paths = @(
+    "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*",
+    "HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*",
+    "HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*"
+)
+
+$apps = Get-ItemProperty $paths -ErrorAction SilentlyContinue | Select-Object DisplayName, DisplayVersion, Publisher, InstallDate, InstallLocation, UninstallString, PSChildName | Where-Object {
+    # Always require a name to exist
+    if (-not $_.DisplayName) { return $false }
+
+    # If no filter provided → return everything
+    if (-not $DisplayName) { return $true }
+
+    # Otherwise match any provided name (partial match)
+    foreach ($name in $DisplayName) {
+        if ($_.DisplayName -like "*$name*") {
+            return $true
+        }
+    }
+
+    return $false
+}
+
+$apps
